@@ -1,2 +1,5 @@
-# fullstack-mooc-helsinki
-My progress with a full stack course.
+# Open, free full stack course
+
+[Course here](https://fullstackopen.com/en/)!
+
+
