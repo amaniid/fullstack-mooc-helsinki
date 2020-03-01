@@ -2,6 +2,13 @@
 
 [Course here](https://fullstackopen.com/en/)!
 
-I am using Visual Code Studio.
+Operating system:
+* Linux (Cubbli)
 
+Text editor on terminal:
+  * Vim (trying to learn)
+  * Nano
 
+My tools:
+* Visual Code Studio
+  * HTML
