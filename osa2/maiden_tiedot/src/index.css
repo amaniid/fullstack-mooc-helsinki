@@ -1,0 +1,39 @@
+body {
+  margin: 1em;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.photo {
+  max-width:20em;
+  max-height:20em;
+  width: auto;
+  height: auto;
+  border: solid 2px;
+  border-color: black;
+  position: fixed;
+  /* top: 50%; */
+  left: 50%;
+  /* margin-top: -50px; */
+  margin-left: -100px;
+}
+
+.mappic {
+  max-width:20em;
+  max-height:20em;
+  width: auto;
+  height: auto;
+}
+
+.leaflet-container {
+  width: 50%;
+  height: 50vh;
+}
