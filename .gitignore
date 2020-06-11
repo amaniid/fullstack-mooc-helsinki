@@ -6,3 +6,7 @@ logo192.png
 logo512.png
 setupTests.js
 README.md
+
+# all node_modules folders
+node_modules/
+public/
