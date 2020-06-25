@@ -33,15 +33,23 @@ Content-Type: application/json
 
 {
     "name": "test1",
-    "number": "04"
+    "number": "04595674"
 }
 
 ###
-
 POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "test5",
-    "number": "01"
+    "name": "just tiina",
+    "number": "04"
+}
+
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "kuu ukkeli",
+    "number": "04512682076"
 }
