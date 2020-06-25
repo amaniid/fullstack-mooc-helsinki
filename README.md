@@ -4,12 +4,17 @@
 Available also in Finnish.
 
 ### Operating system:
-* Linux (Cubbli)
+* Linux (Ubuntu)
+* Using Windows Subsystem for Linux 2 !
+
+### Terminal
+* Windows Terminal
+* Color theme Dracula (googl)
 
 ### Text editor on terminal:
   * Vim (trying to learn)
   * Nano
 
 ### My tools:
-* Visual Code Studio
-  * HTML
+* Visual Studio Code
+  * HTML, CSS, Javascript
