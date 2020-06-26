@@ -11,8 +11,7 @@ const Notification = ({ message, msgColor }) => {
         return null
     }
 
-    console.log(msgColor)
-    //console.log('')
+    //console.log(msgColor)
 
     const notificationStyle = {
         color: msgColor,
@@ -37,7 +36,7 @@ const App = () => {
 
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('+358')
-    const [filterCondition, setFilterCondition] = useState('Jorma')
+    const [filterCondition, setFilterCondition] = useState('')
     const [notification, setNotification] = useState([null, 'green'])
 
     const hook = () => {
@@ -58,13 +57,27 @@ const App = () => {
         console.log('button clicked', event.target)
 
         if (persons.some(person => person.name === newName)) {
-            const giveNewNumber = window.confirm(`${newName} is already added to phonebook.
-            Do you want to replace the old number with a new one?`)
-            //setNewName('')
+            // |persons.some(person => person.number === newNumber)
+            //alert(`Name ${newName} and/or number ${newNumber} is/are already added to phonebook.`)
+            //const giveNewNumber = false
+            const giveNewNumber = window.confirm(
+                `${newName} is already added to phonebook. Do you want to replace the old number with a new one?`
+            )
             if (!giveNewNumber) {
+                // setNotification([`Name ${newName} and/or number ${newNumber} is/are already added to phonebook.`,
+                //     'red'])
+                // setTimeout(() => {
+                //     setNotification([null, 'green'])
+                // }, 5000)
+                setNewName('')
+                setNewNumber('+358')
                 return
             }
-
+            //18.6.2020
+            //code cannot go here !
+            //this will be implemented later on
+            //25.6.2020
+            //code can go here again !
             const person = persons.find(p => p.name === newName)
             const personWithNewNumber = { ...person, number: newNumber }
 
@@ -74,13 +87,18 @@ const App = () => {
                     setPersons(persons.map(person => person.id !== newNumberOldName.id ? person : newNumberOldName))
 
                     setNotification([`Changed ${newNumberOldName.name}'s number!`, 'green'])
+                    setNewName('')
+                    setNewNumber('+358')
                     setTimeout(() => {
                         setNotification([null, 'green'])
                     }, 5000)
+
                 })
                 .catch(error => {
                     setNotification([`Information of ${person.name} has already been removed from server`,
                         'red'])
+                    setNewName('')
+                    setNewNumber('+358')
                     setTimeout(() => {
                         setNotification([null, 'green'])
                     }, 5000)
@@ -88,18 +106,23 @@ const App = () => {
                 })
 
             return
+        } else if (persons.some(person => person.number === newNumber)) {
+            const id = persons.findIndex(person => person.number === newNumber)
+            alert(`Number ${newNumber} is already added to phonebook for ${persons[id].name}.`)
+            setNewNumber('+358')
+            return
         }
 
         const personObject = {
             name: newName,
-            number: newNumber
+            number: newNumber,
         }
 
         personService
             .create(personObject)
             .then(
                 returnedContact => {
-                    //console.log('CONTACT ADDED TO PHONEBOOK')
+                    console.log('CONTACT ADDED TO PHONEBOOK')
                     setPersons(persons.concat(returnedContact))
 
                     setNotification([`Added ${returnedContact.name}!`, 'green'])
@@ -111,6 +134,14 @@ const App = () => {
                     setNewNumber('+358')
                 }
             )
+            .catch(error => {
+                console.log(error.response.data)
+
+                setNotification([error.response.data.error, 'red'])
+                setTimeout(() => {
+                    setNotification([null, 'green'])
+                }, 5000)
+            })
 
 
     }
@@ -149,8 +180,32 @@ const App = () => {
                     }, 5000)
                 })
         }
+    }
 
+    const copyId = (id) => {
+        // Create a dummy input to copy the string array inside it
+        var dummy = document.createElement("textarea")
 
+        // Add it to the document
+        document.body.appendChild(dummy)
+
+        // Set its ID
+        dummy.value = id
+
+        // Select it
+        dummy.select()
+
+        // Copy its contents
+        document.execCommand("copy")
+
+        // Remove it as its not needed anymore
+        document.body.removeChild(dummy)
+
+        // Notify user
+        setNotification([`Copied id ${id} to clipboard.`, 'green'])
+        setTimeout(() => {
+            setNotification([null, 'green'])
+        }, 5000)
     }
 
 
@@ -167,6 +222,7 @@ const App = () => {
                 <RenderPerson
                     key={i}
                     person={person}
+                    copy={() => copyId(person.id)}
                     deleteContact={() => deleteContactById(person.name, person.id)}
                 />
             )}

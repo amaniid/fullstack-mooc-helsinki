@@ -6,7 +6,11 @@ logo192.png
 logo512.png
 setupTests.js
 README.md
+javascript_basics.js
 
 # all node_modules folders
 node_modules/
 public/
+
+# i don't like what i did to week 2 during week 3...
+osa2/

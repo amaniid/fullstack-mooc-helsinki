@@ -95,7 +95,7 @@ const errorMessage = (body) => {
     return
 }
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     //console.log(request.headers)
 
     const body = request.body
@@ -109,55 +109,69 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    // mongoose query (what Contact.find() returns) is not a promise: it is thenable !!
-    Contact.find().or([{ name: body.name }, { number: body.number }])
-        .then(contacts => {
-            // if no contacts with same name or number, continue normally
-            if (!contacts.length) {
-                //make new Contact schema model etc.
-                const contact = new Contact({
-                    name: body.name,
-                    number: body.number,
-                })
+    //make new Contact schema model etc.
+    const contact = new Contact({
+        name: body.name,
+        number: body.number,
+    })
 
-                console.log(`Adding contact; name: ${contact.name}, number: ${contact.number} to DATABASE`)
+    console.log(`Adding contact; name: ${contact.name}, number: ${contact.number} to DATABASE`)
 
-                contact.save()
-                    .then(savedNote => {
-                        response.json(savedNote)
-                    })
-                // if match(es) (should be 1!) found for names; update number !
-            } else {
-                const contact = {
-                    name: body.name,
-                    number: body.number,
-                }
-
-                if (contacts[0].name === contact.name & contacts[0].number === contact.number) {
-                    return response.status(400).json({
-                        error: "contact is already saved (same number & name)"
-                    })
-                } else if (contacts.some(person => person.number === contact.number)) {
-                    const id = contacts.findIndex(person => person.number === contact.number)
-                    return response.status(400).json({
-                        error: `number is already saved to ${contacts[id].name}`
-                    })
-                } else if (contacts.some(person => person.name === contact.name)) {
-                    const id = contacts.findIndex(person => person.name === contact.name)
-                    //console.log(id)
-                    console.log(`Updating contact; name: ${contact.name}, number: ${contact.number}`)
-                    console.log("id:", contacts[id].id)
-                    Contact.findByIdAndUpdate(contacts[id].id, contact, { new: true })
-                        .then(updatedNote => {
-                            response.json(updatedNote)
-                        })
-                }
-
-
-            }
-
+    contact.save()
+        .then(savedNote => {
+            response.json(savedNote)
         })
         .catch(error => next(error))
+
+    // // mongoose query (what Contact.find() returns) is not a promise: it is thenable !!
+    // Contact.find().or([{ name: body.name }, { number: body.number }])
+    //     .then(contacts => {
+    //         // if no contacts with same name or number, continue normally
+    //         if (!contacts.length) {
+    //             //make new Contact schema model etc.
+    //             const contact = new Contact({
+    //                 name: body.name,
+    //                 number: body.number,
+    //             })
+
+    //             console.log(`Adding contact; name: ${contact.name}, number: ${contact.number} to DATABASE`)
+
+    //             contact.save()
+    //                 .then(savedNote => {
+    //                     response.json(savedNote)
+    //                 })
+    //             // if match(es) (should be 1!) found for names; update number !
+    //         } else {
+    //             const contact = {
+    //                 name: body.name,
+    //                 number: body.number,
+    //             }
+
+    //             if (contacts[0].name === contact.name & contacts[0].number === contact.number) {
+    //                 return response.status(400).json({
+    //                     error: "contact is already saved (same number & name)"
+    //                 })
+    //             } else if (contacts.some(person => person.number === contact.number)) {
+    //                 const id = contacts.findIndex(person => person.number === contact.number)
+    //                 return response.status(400).json({
+    //                     error: `number is already saved to ${contacts[id].name}`
+    //                 })
+    //             } else if (contacts.some(person => person.name === contact.name)) {
+    //                 const id = contacts.findIndex(person => person.name === contact.name)
+    //                 //console.log(id)
+    //                 console.log(`Updating contact; name: ${contact.name}, number: ${contact.number}`)
+    //                 console.log("id:", contacts[id].id)
+    //                 Contact.findByIdAndUpdate(contacts[id].id, contact, { new: true })
+    //                     .then(updatedNote => {
+    //                         response.json(updatedNote)
+    //                     })
+    //             }
+
+
+    //         }
+
+    //     })
+    //     .catch(error => next(error))
 
 })
 
@@ -165,7 +179,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
     const id = request.params.id
     console.log('Deleting contact from id=', id)
     Contact.findByIdAndRemove(request.params.id)
-        .then(result => {
+        .then(() => {
             response.status(204).end()
         })
         .catch(error => next(error))
@@ -205,6 +219,8 @@ const errorHandler = (error, request, response, next) => {
 
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id' })
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).send({ error: error.message })
     }
 
     next(error)
